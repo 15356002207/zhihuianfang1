@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--摄像头[camera]SQL语句 -->
+<mapper namespace="Camera">
+
+	<select id="listCamerasPage" parameterType="Dto" resultType="Dto">
+		SELECT
+	
+		<include refid="dao.CameraDao.column" />
+		FROM camera
+		<where>
+		<if test="device_id != null and device_id != ''">
+				       AND device_id = #{device_id} 
+				   
+				</if>
+ 		</where>
+	</select>
+	<select id="listcameras" parameterType="Dto" resultType="Dto">
+		SELECT
+	
+		<include refid="dao.CameraDao.column" />
+		FROM camera
+		<where>
+		<if test="device_id != null and device_id != ''">
+				      AND device_id = #{device_id}
+				     
+				</if>
+ 		</where>
+	</select>
+	
+	
+</mapper>

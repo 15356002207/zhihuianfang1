@@ -1,0 +1,1557 @@
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ page import="java.util.*" %>
+<%
+
+String path=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
+System.out.print("path"+path);
+%>
+<%@ page import="java.awt.Desktop" %>
+<%@ page import="java.io.File" %>
+<%@ include file="/WEB-INF/jsp/common/tags.jsp"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<aos:html title="alarm_log" base="http" lib="ext">
+
+<head>
+    <title>EZUIKit控件 demo</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" >
+    <style type="text/css">
+
+    </style>
+<body background="AD0IrvLrBhACGAAgj4nBywUosru3rgYwgA84oAY.jpg">
+</head>
+
+<body onload="init()">
+<table border=1  width="1500" >
+
+    <tbody align="center">
+<tr>
+    <!--<img id="preview" />-->
+    <!--<br />-->
+    <!--<input type="file" name="file" onchange="imgPreview(this)" />-->
+    <td rowspan="2" colspan="3"  > <object classid="clsid:54FC7795-1014-4BF6-8BA3-500C61EC1A05" id="EZUIKit" width="900" height="600" name="EZUIKit" ></object></td>
+    <td colspan="2" height="200" >
+
+
+        <div ><img id="preview" /><img name="img">
+
+        </div>
+        <font color="#f5fffa"  size="5" style="position:absolute;left:1095px; top:30px;">截图预览</font>
+        <font color="#f5fffa"style="position:absolute;left:1000px; top:422px;">选择日期</font>
+        <input style="position:absolute;left:1080px; top:420px;" type="text"  id="dateSelector" onclick="JTC.setday()"/>
+        <input  type="image" src="确定.png" width="45" style="position:absolute;left:1250px; top:410px;" onclick="getDate()">
+        <!--&lt;!&ndash; 使用DIV &ndash;&gt;-->
+        <!--<div style="width:120px; height:30px; border:1px solid blue;"  onclick="JTC.setday()"></div>-->
+
+        <!--&lt;!&ndash; 使用文本框与按钮相结合 &ndash;&gt;-->
+        <!--<input type="text" id="timeID" />-->
+        <!--<input type="button" value="选择1" onclick="JTC.setday('timeID')" />-->
+        <!--<input type="button" value="选择2" onclick="JTC.setday({outObject: 'timeID'})" />-->
+
+    </td>
+
+<td width="80">
+    <input  type="image" src="向上箭头1.png"  width="60" onclick="pre()" style="position:absolute;left:1410px; top:70px;  " >
+    <input type="image" src="向上箭头.png"  width="60" onclick="next()" style="position:absolute; left:1410px; top:340px;">
+
+    <td><span id="sp"></span></td>
+
+        <!--<div>-->
+            <!--<input type="button" value="上一张" onclick="pre()";>-->
+            <!--<input type="button" value="下一张" onclick="next()";>-->
+        <!--</div>-->
+</td>
+</tr>
+<tr>
+
+    <td >
+        <input type="image" src="方向1.png" width="60"  style="position:absolute;left:1000px; top:510px;  "  onmousedown="StartUpPTZCtrl()" onmouseup="StopUpPTZCtrl()" style="display:block" id="ptzupbtn">
+        <input type="image" src="方向2.png" width="30" style="position:absolute; left:980px; top:530px; "onmousedown="StartLeftPTZCtrl()" onmouseup="StopLeftPTZCtrl()" style="display:block" id="ptzleftbtn">
+        <input type="image" src="方向3.png" width="30"style="position:absolute; left:1050px; top:530px;"onmousedown="StartRightPTZCtrl()" onmouseup="StopRightPTZCtrl()" style="display:block" id="ptzrightbtn">
+        <input type="image" src="方向4.png" width="60" style="position:absolute; left:1000px; top:580px; "onmousedown="StartDownPTZCtrl()" onmouseup="StopDownPTZCtrl()" style="display:block" id="ptzdownbtn">
+    </td>
+
+    <td id="button" width="200">
+        <input  type="image" src='对讲1.png' id="picts" width=60 onclick="change_pic" > </font>
+
+    </td>
+
+    <td width="150" id="button2"><input  type="image"  src='截图.png' id="picts2" width=60 alt="" onclick="CapturePicture()" style="display:block" id="capturePicbtn style="color: mintcream ></td>
+
+</tr>
+<tr>
+    <td  style type="text/css" width="220">
+        <div class="toggle" div align="lift">
+            <input type="checkbox" checked id="t" onclick="Play()" style="display:block" id="startplaybtn">
+
+            <label for="t"></label>
+        </div>
+        <style type="text/css">
+            .toggle{
+                width: 80px;
+                height: 26px;
+                background: #333;
+                margin: 20px auto;
+                position: relative;
+                border-radius: 50px;
+                box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5),0px 1px 0px rgba(255,255,255,0.2);
+            }
+            .toggle:after{
+
+                color: #fff;
+                position: absolute;
+                right: 10px;
+                z-index: 0;
+                font: 12px/26px Arial, sans-serif;
+                font-weight: bold;
+                text-shadow: 1px 1px 0px rgba(255,255.255..15);
+            }
+            .toggle:before{
+                content: 'ON';
+                color: #f66;
+                position: absolute;
+                left: 10px;
+                z-index: 0;
+                font: 12px/26px Arial, sans-serif;
+                font-weight: bold;
+
+            }
+            .toggle label{
+                display: block;
+                width: 34px;
+                height: 20px;
+                cursor: pointer;
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                z-index: 1;
+                background: #fcfff4;
+                background: linear-gradient(top,#fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+                border-radius: 50px;
+                transition: all 0.4s ease;
+                box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.3);
+            }
+            .toggle input[type=checkbox]{
+                visibility: hidden;
+            }
+            .toggle input:checked + label{
+                left: 43px;
+            }
+        </style>
+
+
+    </td>
+    <td><textarea rows=8 cols=70 id="dataPanel" style="border:0px;background:none ;color: mintcream"></textarea></td>
+<td  background:none><font color="#f5fffa">播放结果</font></td>
+    <td colspan="3" ;color: mintcream><textarea rows=8 cols=70 id="showPanel" value="" style="border:0px;background:none;color: mintcream "></textarea></td>
+</tr>
+</table>
+<script type="text/javascript">
+
+
+var afterUrl =  window.location.search.substring(11);
+var afterUrl1=afterUrl.substring(0,48);
+var afterUrl2=afterUrl.substring(48);
+
+
+
+    var gAppKey;				//app key
+    var gAccessToken;			//accesstoken
+    var gPlaybackSearchRecord;	//search record
+    var a=0;
+    var b=0;
+    function init() {
+        TestActiveX();
+        var text = '{ \n' +
+        ' "AppKey":"7f139f95ccab", \n' +
+        ' "AccessToken":" ", \n' +
+        ' "Url":" " \n}';
+        var showpanel = document.getElementById("dataPanel"); //获取显示的窗口
+
+        showpanel.value = text;
+        document.getElementById('starttalkbtn').style.display='none';
+        document.getElementById('stoptalkbtn').style.display='none';
+        document.getElementById('ptzupbtn').style.display='none';
+        document.getElementById('ptzdownbtn').style.display='none';
+        document.getElementById('ptzleftbtn').style.display='none';
+        document.getElementById('ptzrightbtn').style.display='none';
+    }
+
+    function Play() {
+
+        a = a+1;
+        if(a%2 == 1){
+            StartPlay();
+        }else{
+            StopPlay();
+
+        }
+
+    }
+    // function Talk() {
+    //    b=b+1;
+    //         if(b%2 == 1){
+    //     picts.setAttribute("src","对讲4.png");
+    //           StartTalk()
+    //         }else{
+    //             picts.setAttribute("src","对讲3.png");
+    //            StopTalk()
+    //        }
+    //
+    //     }
+    function change_pic(){
+        var button = document.getElementById("button");
+
+        var picts = document.getElementById("picts");
+
+        button.onclick = function(){
+            if(picts.getAttribute("src",2) == "对讲5.png"){
+
+                picts.setAttribute("src","对讲1.png");
+                StopTalk();
+
+            }else{
+
+                picts.setAttribute("src","对讲5.png");
+                StartTalk();
+            };
+        }
+    }
+    change_pic();
+
+
+    function change_pic2(){
+        var button2 = document.getElementById("button2");
+
+        var picts2 = document.getElementById("picts2");
+
+        button2.onclick = function(){
+            if(picts2.getAttribute("src",2) == "截图2.png"){
+
+                picts2.setAttribute("src","截图.png");
+
+            }else{
+
+                picts2.setAttribute("src","截图2.png");
+
+            };
+        }
+    }
+    change_pic2();
+    //预览函数
+    function StartPlay() {
+        gPlaybackSearchRecord = "";
+        //得到控件引用
+        var playOcx = document.getElementById("EZUIKit");
+        if(!playOcx)
+        {
+            alert("EZUIKit can't find!");
+            return ;
+        }
+
+        //获取取流参数
+        var streamparams = document.getElementById("dataPanel").value;
+        try{
+            var streamobj = JSON.parse(streamparams);
+        }catch(e){
+            alert("JSON parser failed.")
+        }
+
+        if (!streamobj)
+        {
+            alert("Get stream params invalid!");
+            return ;
+        }
+        var appkey = streamobj.AppKey;
+        var accesstoken = streamobj.AccessToken;
+        var ezurl = streamobj.Url;
+        //检测取流参数
+        if(appkey=="")
+        {
+            alert("Appkey is empty!");
+            return ;
+        }
+        if(accesstoken=="")
+        {
+            alert("Accesstoken is empty!");
+            return ;
+        }
+        if(ezurl=="")
+        {
+            alert("EzUrl is empty!");
+            return ;
+        }
+        //alert(appkey);
+        //alert(accesstoken);
+        //alert(ezurl);
+        //设置appkey
+        //判断参数是否初始化过
+        if(gAppKey != appkey)
+        {
+            var res = playOcx.InitWithAppKey("7f139f95ccab4ad0be82630b443edb0b");
+            if(0 != res)
+            {
+                alert("Init appkey Error!");
+                return;
+            }
+            gAppKey = appkey;
+            //alert("Init appkey success.");
+        }
+        //设置
+        if(gAccessToken != accesstoken)
+        {
+            var res = playOcx.SetAccessToken(afterUrl2);
+            if(0 != res)
+            {
+                alert("Init accesstoken Error!");
+                return;
+            }
+            gAccessToken = accesstoken;
+            //alert("Init accesstoken success.");
+        }
+        //清理播放结果窗口
+        var showpanel = document.getElementById("showPanel"); //获取显示的窗口
+        showpanel.value = "";
+        //开始播放, 播放结果 根据 PluginEventHandler 回调函数
+        var res = playOcx.StartPlay(afterUrl1);
+        if(0 != res)
+        {
+            alert("startplay failed! check ezurl!");
+            return ;
+        }
+        //alert("Startplay success.");
+    }
+
+    function StopPlay() {
+        //清理播放结果窗口
+        var showpanel = document.getElementById("showPanel"); //获取显示的窗口
+        showpanel.value = "";
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.StopPlay();
+        if(0 != res)
+        {
+            alert("StopPlay Error！");
+        }
+    }
+  //读取文件
+    function imgPreview(fileDom){
+        //判断是否支持FileReader
+        if (window.FileReader) {
+            var reader = new FileReader();
+        } else {
+            alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
+        }
+
+        //获取文件
+        var file = fileDom.files[0];
+        var imageType = /^image\//;
+        //是否是图片
+        if (!imageType.test(file.type)) {
+            alert("请选择图片！");
+            return;
+        }
+        //读取完成
+        reader.onload = function() {
+            //获取图片dom
+            var img = document.getElementById("preview");
+            //图片路径设置为读取的图片
+            /*img.src = e.target.result;*/
+
+            img.src = "对讲.png";
+        };
+      reader.readAsDataURL(file);
+    }
+
+    function CapturePicture() {
+        var date =new Date;
+        var picname = date.getTime()
+        // var preDate = date.getTime();
+        // var nextDate = date.getTime() ;
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.CapturePicture(picname);
+
+        // var res = "C:\\Users\\Administrator\\IdeaProjects\\Mydemo\\a.jpg";
+        if (res == "") {
+            alert("capture picture Error！");
+        }
+        else {
+
+            var img = document.getElementById("preview");
+           
+            //图片路径设置为读取的图片
+            img.src = res;
+            img.style.width = '450px';
+            img.style.height = '300px';
+            var imgName = img.src.substring(img.src.lastIndexOf('/') + 1);
+
+            alert("picture save at " + res);
+           Read();
+    }
+
+    }
+
+
+    // function insertpic(){
+    //     path="file:///C:/Users/Administrator/Shipin7/CaptureFiles/2018-09-10/p.jpg";//请修改为本地图片的路径
+    //     document.getElementById('myimage').innerHTML='<img src="'+path+'" />';
+    // }
+//ptz command
+//日期选择器
+     var JTC = (function () {
+//
+        var JTC = function () { },
+
+            config = {
+                dayBgColor: ['#90E3F7', '#FFFFFF', '#FFDA44'], //鼠标移动的颜色
+                dayColor: ['#0000FF', '#000000', '#888888'], //日期字体颜色:1.上月和下月的日期; 2.本月; 3.不可选时
+                format: 'yyyy-MM-dd',   //返回日期值的格式
+                outObject: null,
+                startDay: null,
+                minDate: 0,         //日期范围最小值(yyyyMMdd) 0.表示不设定
+                maxDate: 0,         //日期范围最大值(yyyyMMdd) 0.表示不设定
+                ranged: 1,          //是否包含日期边界值: 0.不包含; 1.包含
+                showClear: true,    //是否显示清空按钮
+                today: null,
+                bgDivID: 'JTC_BG_DIV',
+                dayPanelId: 'JTC_TheCurDay',
+                yearCell: 'JTC_TheCurYear',
+                monthCell: 'JTC_TheCurMonth',
+                clearButtonId: 'JTC_ClearButton',
+                monthSelector: 'JTC_MonthSelector',
+                yearSelector: 'JTC_YearSelector'
+            },
+
+            lang = {
+                monthText: {
+                    zh: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+                },
+                weekDay: { zh: ['日', '一', '二', '三', '四', '五', '六'],
+                    en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                },
+                clearBn: { zh: '清空', en: 'Clear' },
+                todayBn: { zh: '今天', en: 'Today' },
+                closeBn: { zh: '关闭', en: 'Close' },
+                yearCell: { zh: '单击选择年份', en: 'Click to select the year' },
+                monthCell: { zh: '单击选择月份', en: 'Click to select the month' }
+            },
+
+            trim = function (str) {
+                return str.replace(/(\s*$)|(^\s*)/g, '');
+            },
+
+            $ = function (id, doc) {
+                var doc = doc || document;
+                return doc.getElementById(id);
+            },
+
+            $$ = function (name, doc) {
+                var doc = doc || document;
+                return doc.createElement(name);
+            },
+
+            browser = (function () {
+                var ua = navigator.userAgent.toLowerCase();
+                return {
+                    VERSION: parseInt(ua.match(/(msie|firefox|webkit|opera)[\/:\s](\d+)/) ? RegExp.$2 : '0'),
+                    IE: (ua.indexOf('msie') > -1 && ua.indexOf('opera') == -1),
+                    GECKO: (ua.indexOf('gecko') > -1 && ua.indexOf('khtml') == -1),
+                    WEBKIT: (ua.indexOf('applewebkit') > -1),
+                    OPERA: (ua.indexOf('opera') > -1)
+                };
+            })(),
+
+            util = {
+                today: function () {
+                    if (config.today != null) { return config.today; }
+                    return new Date();
+                },
+
+                getLangText: function (text) {
+                    var language = (navigator.appName == 'Netscape') ? navigator.language : navigator.browserLanguage;
+                    return text[(language.indexOf('en-') >= 0) ? 'en' : 'zh'];
+                },
+
+                createTable: function (doc) {
+                    var table = $$('table', doc);
+                    table.cellPadding = 0;
+                    table.cellSpacing = 0;
+                    table.border = 0;
+                    table.style.cursor = 'default';
+                    return table;
+                },
+
+                createButton: function (text, style, func, id) {
+                    var button = $$('input');
+                    button.setAttribute('type', 'button');
+                    button.value = text;
+                    if (id) { button.id = id; }
+                    util.setObjectStyle(button, style + 'cursor:pointer;border:0px;');
+                    button.onclick = func;
+                    return button;
+                },
+
+                copyConfig: function () {
+                    var arg = ['format', 'outObject', 'minDate', 'maxDate', 'ranged', 'showClear', 'startDay'];
+                    var set = {};
+                    for (var i = 0; i < arg.length; i++) { set[arg[i]] = config[arg[i]]; }
+                    config['set'] = set; return config['set'];
+                },
+
+                formatDate: function (date, format) {
+                    var lang = { 'M+': date.getMonth() + 1, 'd+': date.getDate() };
+                    if (/(y+)/.test(format)) {
+                        format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+                    }
+                    for (var key in lang) {
+                        if (new RegExp('(' + key + ')').test(format)) {
+                            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? lang[key] : ('00' + lang[key]).substr(('' + lang[key]).length));
+                        }
+                    }
+                    return format;
+                },
+
+                getCoords: function (ev) {
+                    ev = ev || window.event;
+                    return { x: ev.clientX, y: ev.clientY };
+                },
+
+                getDocumentElement: function (doc) {
+                    doc = doc || document;
+                    return (doc.compatMode != "CSS1Compat") ? doc.body : doc.documentElement;
+                },
+
+                getScrollPos: function () {
+                    var x, y;
+                    if (browser.IE || browser.OPERA) {
+                        var el = this.getDocumentElement();
+                        x = el.scrollLeft; y = el.scrollTop;
+                    } else {
+                        x = window.scrollX; y = window.scrollY;
+                    }
+                    return { x: x, y: y };
+                },
+
+                getElementPos: function (el) {
+                    var x = 0, y = 0;
+                    if (el.getBoundingClientRect) {
+                        var box = el.getBoundingClientRect();
+                        var el = this.getDocumentElement();
+                        var pos = this.getScrollPos();
+                        x = box.left + pos.x - el.clientLeft;
+                        y = box.top + pos.y - el.clientTop;
+                    } else {
+                        x = el.offsetLeft; y = el.offsetTop;
+                        var parent = el.offsetParent;
+                        while (parent) {
+                            x += parent.offsetLeft; y += parent.offsetTop;
+                            parent = parent.offsetParent;
+                        }
+                    }
+                    return { x: x, y: y };
+                },
+
+                setObjectStyle: function (obj, style) {
+                    obj.setAttribute('style', style);
+                    obj.style.cssText = style;
+                },
+
+                setDate: function (dateObj) {
+                    if (dateObj == null || dateObj == undefined) { return null; }
+                    var ret = null;
+                    var x = typeof (dateObj);
+                    try {
+                        if (x == 'string') {
+                            ret = new Date(trim(dateObj).replace(/[^0-9: ]+/g, '/'));
+                        } else if (x == 'object') {
+                            if (dateObj.getTime()) { ret = new Date(dateObj.getTime()); }
+                        }
+                    } catch (e) { ret = null; }
+                    return ret;
+                },
+
+                isLeapYear: function (year) {   //是否为闰年
+                    return (0 == year % 4 && ((year % 100 != 0) || (year % 400 == 0)))
+                },
+
+                getMonthCount: function (yy, mm) {
+                    var count = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+                    var days = count[mm - 1];
+                    if (mm == 2 && util.isLeapYear(yy)) { days++; }
+                    return days;
+                },
+
+                getNYearMonth: function (yy, mm, n) {
+                    if (n > 0) {
+                        if (mm + n > 12) { mm = 1; yy++; }
+                        else { mm++; }
+                    } else {
+                        if (mm + n <= 0) { yy--; mm = 12; }
+                        else { mm--; }
+                    }
+                    return { YY: yy, MM: mm };
+                },
+
+                getDateNumbers: function (date) {
+                    return { year: date.getFullYear(), month: date.getMonth() + 1, day: date.getDate() };
+                },
+
+                getIntegerOfDay: function (yy, mm, dd) {
+                    if (yy == null) { return 0; }
+                    if (arguments.length == 1) {
+                        var x = util.getDateNumbers(yy);
+                        return x.year * 10000 + x.month * 100 + x.day;
+                    } else {
+                        return yy * 10000 + mm * 100 + dd;
+                    }
+                },
+
+                checkDateRange: function (yyMMdd) {
+                    var set = config['set'];
+                    if (set.maxDate == 0 && set.minDate == 0) { return true; }
+                    if (set.minDate == 0) {
+                        return set.ranged == 1 ? (yyMMdd <= set.maxDate) : (yyMMdd < set.maxDate);
+                    } else if (set.maxDate == 0) {
+                        return set.ranged == 1 ? (yyMMdd >= set.minDate) : (yyMMdd > set.minDate);
+                    }
+                    if (set.ranged == 1) {
+                        return yyMMdd >= set.minDate && yyMMdd <= set.maxDate;
+                    } else {
+                        return yyMMdd > set.minDate && yyMMdd < set.maxDate;
+                    }
+                },
+
+                getEventSrcObject: function () {
+                    var theEvent = window.event;
+                    if (theEvent == undefined) {
+                        var caller = arguments.callee.caller;
+                        while (caller.caller != null) { caller = caller.caller; }
+                        theEvent = caller.arguments[0];
+                    }
+                    return theEvent.srcElement ? theEvent.srcElement : theEvent.target;
+                },
+
+                outObjectValue: function (arg) {
+                    var obj = config['set'].outObject;
+                    if (arguments.length < 1) {
+                        return trim(obj.tagName.toLowerCase() == 'input' ? obj.value : obj.innerHTML);
+                    }
+                    var str = typeof (arg) == 'object' ? util.formatDate(arg, config['set'].format) : '';
+                    if (obj.tagName.toLowerCase() == 'input') {
+                        obj.value = str;
+                    } else {
+                        obj.innerHTML = str;
+                    }
+                }
+            },
+
+            events = {
+                addEvent: function (el, event, listener) {
+                    if (el.addEventListener) {
+                        el.addEventListener(event, listener, false);
+                    } else if (el.attachEvent) {
+                        el.attachEvent('on' + event, listener);
+                    }
+                },
+
+                removeEvent: function (el, event, listener) {
+                    if (el.removeEventListener) {
+                        el.removeEventListener(event, listener, false);
+                    } else if (el.detachEvent) {
+                        el.detachEvent('on' + event, listener);
+                    }
+                },
+
+                show: function (top, left) {
+                    var outv = '';
+                    var readyDay = util.today();
+                    if (config['set'].startDay == null) {
+                        outv = util.outObjectValue();
+                        if (outv != '') {
+                            outv = outv.replace(/[^0-9:]/gi, '/');
+                            if ((new Date(outv)).toString().toLowerCase() != 'invalid date') {
+                                readyDay = new Date(outv);
+                            }
+                        }
+                    } else {
+                        readyDay = config['set'].startDay;
+                    }
+
+                    var div = $(config.bgDivID);
+                    if (div == null || div == undefined) {
+                        dialog();
+                        div = $(config.bgDivID);
+                    }
+                    var ymd = util.getDateNumbers(readyDay);
+                    events.createDay(ymd.year, ymd.month, ymd.day);
+
+                    div.style.top = top + 'px';
+                    div.style.left = left + 'px';
+                    div.style.display = '';
+                    events.addEvent(document, 'keydown', events.keyDown);
+                    events.addEvent(document, 'mousedown', events.mouseDown);
+                    $(config.clearButtonId).style.display = config['set'].showClear ? '' : 'none';
+                },
+
+                setHeaderYM: function (yy, mm) {
+                    $(config.yearCell).innerHTML = yy;
+                    $(config.monthCell).innerHTML = util.getLangText(lang.monthText)[mm - 1];
+                    $(config.monthCell).axis = mm;
+                },
+
+                createDay: function (yy, mm, dd) {
+                    this.dayRangeEv = function (obj, nday, x) {
+                        var isRange = util.checkDateRange(nday);
+                        obj.axis = x; obj.className = '';
+                        obj.style.backgroundColor = config.dayBgColor[1];
+                        obj.style.color = isRange === true ? config.dayColor[x === 0 ? 1 : 0] : config.dayColor[2];
+                        obj.style.cursor = isRange === true ? 'pointer' : 'default';
+                        obj.onmousemove = isRange === true ? events.dayOnMouseMove : events.emptyFunc;
+                        obj.onmouseout = isRange === true ? events.dayOnMouseOut : events.emptyFunc;
+                        obj.onclick = isRange === true ? events.dayOnClick : events.emptyFunc;
+                    };
+
+                    var dd = dd || 0;
+                    events.setHeaderYM(yy, mm);
+                    var date = new Date(yy, mm - 1, 1);
+                    var firstCount = date.getDay();
+                    firstCount = firstCount < 2 ? firstCount + 7 : firstCount;
+
+                    //上个月的尾数
+                    var pre = util.getNYearMonth(yy, mm, -1);
+                    var preMonthDay = util.getMonthCount(pre.YY, pre.MM);
+                    var obj = null;
+                    for (var i = firstCount - 1; i >= 0; i--) {
+                        obj = $(config.dayPanelId + i);
+                        obj.innerHTML = preMonthDay - firstCount + i + 1;
+                        this.dayRangeEv(obj, util.getIntegerOfDay(pre.YY, pre.MM, preMonthDay - firstCount + i + 1), -1);
+                    }
+                    //本月
+                    var monthDays = util.getMonthCount(yy, mm);
+                    for (var i = 0; i < monthDays; i++) {
+                        obj = $(config.dayPanelId + (firstCount + i));
+                        obj.innerHTML = i + 1;
+                        this.dayRangeEv(obj, util.getIntegerOfDay(yy, mm, i + 1), 0);
+                        if ((dd != i + 1) || obj.style.cursor == 'default') {
+                            obj.style.backgroundColor = config.dayBgColor[1];
+                            obj.className = '';
+                        } else {
+                            obj.style.backgroundColor = config.dayBgColor[0];
+                            obj.className = 'JTC_CHOOSEDAY';
+                        }
+                    }
+                    //下个月
+                    var xx = firstCount + monthDays;
+                    var next = util.getNYearMonth(yy, mm, 1);
+                    for (var i = 0; i < 42 - firstCount - monthDays; i++) {
+                        obj = $(config.dayPanelId + (xx + i));
+                        obj.innerHTML = i + 1;
+                        this.dayRangeEv(obj, util.getIntegerOfDay(next.YY, next.MM, i + 1), 1);
+                    }
+                },
+
+                dayOnMouseMove: function () {
+                    this.style.backgroundColor = config.dayBgColor[0];
+                },
+
+                dayOnMouseOut: function () {
+                    if (this.className != 'JTC_CHOOSEDAY') {
+                        this.style.backgroundColor = config.dayBgColor[1];
+                    }
+                },
+
+                dayOnClick: function () {
+                    var year = parseInt($(config.yearCell).innerHTML.match(/\d+/g)),
+                        month = parseInt($(config.monthCell).axis),
+                        day = parseInt(this.innerHTML);
+
+                    if (this.axis != '0') {
+                        var n = day > 20 ? -1 : 1;
+                        var ready = util.getNYearMonth(year, month, n);
+                        year = ready.YY; month = ready.MM;
+                    }
+
+                    var date = new Date(year + '/' + month + '/' + day);
+                    util.outObjectValue(date);
+                    events.hideLayout();
+                },
+
+                emptyFunc: function () { },
+
+                turnMonth: function (n) {
+                    var year = parseInt($(config.yearCell).innerHTML.match(/\d+/g)),
+                        month = parseInt($(config.monthCell).axis);
+                    if (n != 0) {
+                        var xday = util.getNYearMonth(year, month, n);
+                        year = xday.YY; month = xday.MM;
+                    }
+                    events.createDay(year, month);
+                },
+
+                showSelector: function (flag) {
+                    var flag = flag || 1;
+                    events.hideSelector(flag == 1 ? 2 : 1);
+                    var div = flag == 1 ? $(config.yearSelector) : $(config.monthSelector);
+                    var bool = (div == undefined || div == null);
+                    if (bool) {
+                        div = $$('div');
+                    } else {
+                        if (div.style.display != 'none') { events.hideSelector(flag); return; }
+                        var divChildren = div.childNodes;
+                        for (var i = divChildren.length - 1; i >= 0; i--) {
+                            div.removeChild(divChildren[i]);
+                        }
+                    }
+                    var coord = {
+                        x: parseInt($(config.bgDivID).style.left.match(/\d+/g)) + (flag == 1 ? 32 : 85),
+                        y: parseInt($(config.bgDivID).style.top.match(/\d+/g)) + 25
+                    };
+                    div.id = flag == 1 ? config.yearSelector : config.monthSelector;
+                    var _style = 'position:absolute; z-index:20010; background-color:#FFFFFF; width:78px; height:120px; top:' +
+                        coord.y + 'px; left:' + coord.x + 'px; border:1px solid #A77AEB; padding:2px 2px;';
+                    util.setObjectStyle(div, _style);
+                    var table = util.createTable();
+                    if (flag == 1) {
+                        var start = parseInt($(config.yearCell).innerHTML.match(/\d+/g)) - 5;
+                        events.yearSelector(table, start);
+                    } else {
+                        events.monthSelector(table);
+                    }
+                    div.appendChild(table);
+                    if (bool) {
+                        document.body.appendChild(div);
+                    } else {
+                        div.style.display = '';
+                    }
+                },
+
+                yearSelector: function (table, start, rep) {
+                    var objid = ['JTC_YEATSELECTOR_PRET', 'JTC_YEATSELECTOR_NEXT', 'JTC_YEARSELECTOR'];
+                    var rep = rep || 0;
+                    if (rep == 1) {
+                        for (var i = 0; i < 10; i++) {
+                            $(objid[2] + i).innerHTML = start + i;
+                        }
+                        $(objid[0]).onclick = function () { events.yearSelector(table, start - 10, 1); };
+                        $(objid[1]).onclick = function () { events.yearSelector(table, start + 10, 1); };
+                        return;
+                    }
+
+                    var row, cell;
+                    for (var i = 0; i < 5; i++) {
+                        row = table.insertRow(i);
+                        for (var j = 0; j < 2; j++) {
+                            cell = row.insertCell(j);
+                            cell.id = objid[2] + (j == 0 ? i : i + 5);
+                            cell.innerHTML = start + i + j * 5;
+                            var cellStyle = 'width:37px;;height:20px; text-align:center;font-size:12px;cursor:pointer;';
+                            util.setObjectStyle(cell, cellStyle);
+                            cell.onmousemove = events.dayOnMouseMove;
+                            cell.onmouseout = events.dayOnMouseOut;
+                            cell.onclick = function () {
+                                $(config.yearCell).innerHTML = this.innerHTML;
+                                events.turnMonth(0);
+                                events.hideSelector(1);
+                            };
+                        }
+                    }
+
+                    row = table.insertRow(5);
+                    cell = row.insertCell(0);
+                    cell.colSpan = 2;
+                    var bnStyle = 'border:0px;background-color:#FFFFFF;width:24px;height:20px; margin:0px 0px;';
+                    var button = util.createButton('←', bnStyle, function () {
+                        var s1 = start - 10; events.yearSelector(table, s1, 1);
+                    }, objid[0]);
+                    cell.appendChild(button);
+                    button = util.createButton('×', bnStyle, function () { events.hideSelector(1); });
+                    cell.appendChild(button);
+                    button = util.createButton('→', bnStyle, function () {
+                        var s2 = start + 10; events.yearSelector(table, s2, 1);
+                    }, objid[1]);
+                    cell.appendChild(button);
+                },
+
+                monthSelector: function (table) {
+                    var array = util.getLangText(lang.monthText);
+                    for (var i = 0; i < 6; i++) {
+                        var row = table.insertRow(i);
+                        for (var j = 0; j < 2; j++) {
+                            var cell = row.insertCell(j);
+                            cell.innerHTML = array[i + j * 6];
+                            cell.axis = i + 1 + j * 6;
+                            var cellStyle = 'width:37px;;height:20px; text-align:center;font-size:12px;cursor:pointer;';
+                            util.setObjectStyle(cell, cellStyle);
+                            cell.onmousemove = events.dayOnMouseMove;
+                            cell.onmouseout = events.dayOnMouseOut;
+                            cell.onclick = function () {
+                                $(config.monthCell).axis = this.axis;
+                                events.turnMonth(0);
+                                events.hideSelector(2);
+                            };
+                        }
+                    }
+                },
+
+                hideSelector: function (flag) {
+                    if (flag == 2) {
+                        if ($(config.monthSelector)) { $(config.monthSelector).style.display = 'none'; }
+                    } else {
+                        if ($(config.yearSelector)) { $(config.yearSelector).style.display = 'none'; }
+                    }
+                },
+
+                hideLayout: function () {
+                    var div = $(config.bgDivID);
+                    events.hideSelector(1);
+                    events.hideSelector(2);
+                    div.style.display = 'none';
+                    events.removeEvent(document, 'keydown', events.keyDown);
+                    events.removeEvent(document, 'mousedown', events.mouseDown);
+                },
+
+                keyDown: function (ev) {
+                    ev = ev || window.event;
+                    if (ev.keyCode == 27) { events.hideLayout(); }
+                },
+
+                mouseDown: function (ev) {
+                    var div = $(config.bgDivID);
+                    if (div.style.display == 'none') { return; }
+
+                    var ymFlag = 0;
+                    if ($(config.yearSelectCtrl)) { ymFlag = 1; }
+                    if ($(config.monthSelectCtrl)) { ymFlag = 1; }
+
+                    var minLeft, minTop, maxLeft, maxTop;
+                    var pos = util.getElementPos(div);
+                    minLeft = pos.x; minTop = pos.y;
+                    maxLeft = minLeft + 170;
+                    maxTop = minTop + 190;
+
+                    var scrol = util.getScrollPos();
+                    var mouse = util.getCoords(ev)
+                    var x = scrol.x + mouse.x;
+                    var y = scrol.y + mouse.y;
+                    if (ymFlag == 1) {
+                        if (x < minLeft || x > maxLeft) { events.hideLayout(); }
+                        return;
+                    }
+                    if (x < minLeft || x > maxLeft || y < minTop || y > maxTop) {
+                        events.hideLayout();
+                    }
+                }
+            },
+
+            dialog = function () {
+                this.getHeaderPanel = function () {
+                    var table = util.createTable();
+                    var row = table.insertRow(0);
+                    var cell = row.insertCell(0);
+                    cell.style.width = '30px';
+                    cell.style.height = '23px';
+                    var bnStyle = 'width:28px; height:21px; cursor: pointer; border: 0px none; background-color:#FFFFFF;';
+                    var bn = util.createButton('<', bnStyle, function () { events.turnMonth(-1); }, 'bn_preMonth');
+                    cell.appendChild(bn);
+
+                    cell = row.insertCell(1);
+                    var style = 'cursor:pointer;width:54px; line-height:20px;background-color:#FFFFFF;';
+                    util.setObjectStyle(cell, style);
+                    cell.id = config.yearCell;
+                    cell.title = util.getLangText(lang.yearCell);
+                    cell.onmousemove = function () { this.style.backgroundColor = config.dayBgColor[2]; };
+                    cell.onmouseout = function () { this.style.backgroundColor = config.dayBgColor[1]; };
+                    cell.onclick = function () { events.showSelector(1); };
+
+                    cell = row.insertCell(2);
+                    util.setObjectStyle(cell, style);
+                    cell.id = config.monthCell;
+                    cell.title = util.getLangText(lang.monthCell);
+                    cell.onmousemove = function () { this.style.backgroundColor = config.dayBgColor[2]; };
+                    cell.onmouseout = function () { this.style.backgroundColor = config.dayBgColor[1]; };
+                    cell.onclick = function () { events.showSelector(2); };
+
+                    cell = row.insertCell(3);
+                    cell.style.width = '30px';
+                    bn = util.createButton('>', bnStyle, function () { events.turnMonth(1); });
+                    cell.appendChild(bn);
+
+                    return table;
+                };
+
+                this.getWeekDayPanel = function () {
+                    var table = util.createTable();
+                    style = 'width:23px; height:20px; cursor:pointer; border-right:1px solid #EEEEEE; border-bottom:1px solid #EEEEEE; line-height:16px;';
+                    var panelId = 0; var row = null;
+                    for (var m = 0; m < 6; m++) {
+                        row = table.insertRow(m);
+                        for (var n = 0; n < 7; n++) {
+                            cell = row.insertCell(n);
+                            cell.id = config.dayPanelId + panelId;
+                            util.setObjectStyle(cell, style);
+                            panelId++;
+                        }
+                    }
+
+                    row = table.insertRow(0);
+                    var week = util.getLangText(lang.weekDay);
+                    var style = 'height:23px; border-top:0px; border-bottom:1px solid #008FEE; border-right:0px; border-left:0px;background-color:#FFFFFF;';
+                    for (var i = 0; i < 7; i++) {
+                        var cell = row.insertCell(i);
+                        util.setObjectStyle(cell, style);
+                        cell.innerHTML = week[i];
+                    }
+                    return table;
+                };
+
+                this.getBottomPanel = function () {
+                    var table = util.createTable();
+                    var row = table.insertRow(0);
+                    var cell = row.insertCell(0);
+                    cell.style.width = '48px';
+                    var bnStyle = 'font-size:12px;width:38px; border:0px; background-color:#FFFFFF;';
+
+                    cell = row.insertCell(1);
+                    cell.style.width = '38px';
+                    var bn = util.createButton(util.getLangText(lang.clearBn), bnStyle, function () { util.outObjectValue(''); }, config.clearButtonId);
+                    cell.appendChild(bn);
+
+                    cell = row.insertCell(2);
+                    cell.style.width = '38px';
+                    bn = util.createButton(util.getLangText(lang.todayBn), bnStyle, function () {
+                        var xnow = util.getDateNumbers(util.today());
+                        events.createDay(xnow.year, xnow.month, xnow.day);
+                    });
+                    cell.appendChild(bn);
+
+                    cell = row.insertCell(3);
+                    cell.style.width = '38px';
+                    bn = util.createButton(util.getLangText(lang.closeBn), bnStyle, events.hideLayout);
+                    cell.appendChild(bn);
+
+                    return table;
+                };
+
+                var container = util.createTable();
+                var style = 'border:1px solid #008FEE; font-size:12px; text-align:center;';
+                util.setObjectStyle(container, style);
+
+                var row = container.insertRow(0);
+                var cell = row.insertCell(0);
+                cell.appendChild(this.getHeaderPanel());
+
+                row = container.insertRow(1);
+                cell = row.insertCell(0);
+                cell.appendChild(this.getWeekDayPanel());
+
+                row = container.insertRow(2);
+                cell = row.insertCell(0);
+                cell.appendChild(this.getBottomPanel());
+
+                var div = $$('div');
+                div.id = config.bgDivID;
+                _style = 'position:absolute; width:171px; height:190px;z-index:20000; font-size:12px;display:none;background-color:#FFFFFF;';
+                util.setObjectStyle(div, _style);
+
+                if (browser.IE && browser.VERSION < 7) {
+                    var iframe = $$('iframe');
+                    _style = 'position:absolute; width:170px; height:185px;z-index:-1;';
+                    util.setObjectStyle(iframe, _style);
+                    iframe.frameBorder = 0;
+                    iframe.scrolling = 'no';
+                    iframe.src = 'about:blank';
+                    div.appendChild(iframe);
+                }
+                div.appendChild(container);
+                document.body.appendChild(div);
+            };
+
+        JTC.setday = function (args) {
+            var obj = util.getEventSrcObject();
+            var x = util.copyConfig();
+            x.outObject = obj;
+            this.checkObj = function (str) { return $(str) != null && $(str) != undefined; };
+            if (args) {
+                if (typeof (args) == 'string' && this.checkObj(args)) {
+                    x.outObject = $(args);
+                }
+                else if (typeof (args.outObject) == 'string' && this.checkObj(args.outObject)) {
+                    x.outObject = $(args.outObject);
+                } else if (typeof (args.outObject) == 'object') { x.outObject = args.outObject; }
+
+                x.showClear = (args.showClear || config.showClear) === false ? false : true;
+                x.format = args.format || config.format;
+
+                if (args.today) { JTC.setToday(args.today); }
+                if (args.minDate != undefined || args.maxDate != undefined) {
+                    x.minDate = util.getIntegerOfDay(util.setDate(args.minDate));
+                    x.maxDate = util.getIntegerOfDay(util.setDate(args.maxDate));
+                    x.ranged = (args.ranged || config.ranged) === false ? 0 : 1;
+                }
+                if (args.readOnly === true) { x.outObject.readOnly = true; }
+                if (args.startDay) { x.startDay = util.setDate(args.startDay); }
+
+            }
+
+            var pos = { top: obj.offsetTop, left: obj.offsetLeft, height: obj.clientHeight };
+            while (obj = obj.offsetParent) {
+                pos.top += obj.offsetTop;
+                pos.left += obj.offsetLeft;
+            }
+            var objTop = (typeof (obj) == 'image') ? pos.top + pos.height : pos.top + pos.height + 5;
+            events.show(objTop, pos.left);
+            console.log(15)
+            console.log(objTop);
+
+        };
+
+        JTC.setToday = function (dateObj) {
+            config.today = util.setDate(dateObj);
+        };
+
+        JTC.setDateRange = function (minDate, maxDate, ranged) {
+            config.minDate = util.getIntegerOfDay(util.setDate(minDate));
+            config.maxDate = util.getIntegerOfDay(util.setDate(maxDate));
+            config.ranged = ranged === false ? 0 : 1;
+        };
+
+        JTC.setDateFormat = function (format) {
+            config.format = format || config.format;
+        };
+
+        JTC.setStartDay = function (date) {
+            config.startDay = util.setDate(date);
+        }
+        console.log(13)
+        return JTC;
+
+    })();
+
+
+
+
+
+
+   //上一张和下一张图
+
+
+    var date1 = new Date();
+    var seperator1 = "-";
+    var year = date1.getFullYear();
+    var month = date1.getMonth() + 1;
+    var strDate = date1.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = year + seperator1 + month + seperator1 + strDate;
+
+
+
+    var date =""
+    var mypic = new Array();
+    var index=mypic.length-1;
+
+    function getDate(){
+        date = document.getElementById("dateSelector").value;
+        console.log(date);
+        Read();
+        var img = document.getElementById("preview");
+        //图片路径设置为读取的图片
+        img.src = mypic[0];
+        img.style.width = '450px';
+        img.style.height = '300px';
+
+    }
+
+    function Read() {
+
+        if(date<2){
+            date = currentdate;
+        }
+
+        var tbsource = "C:\\Users\\Administrator\\Shipin7\\CaptureFiles\\"+date+"\\";//本地文件夹路径
+
+        var hdfiles = "";
+
+        var objFSO = new ActiveXObject('Scripting.FileSystemObject');
+
+        if (!objFSO.FolderExists(tbsource)) {
+
+            alert("<" + tbsource + ">该文件夹路径不存在，或者路径不能含文件名！");
+
+            objFSO = null;
+
+//return;
+
+        }
+
+        var objFolder = objFSO.GetFolder(tbsource);
+
+        var colFiles = new Enumerator(objFolder.Files);
+
+        //var re_inf1 = /\.jpg$/; 验证文件夹文件是否jpg文件
+
+        //var re_inf1 = /\[.](jpg|gif|bmg)$/;
+
+        var re_inf1 = /\.(gif|jpg|jpeg|bmp)$/i;
+
+        for (var i = 0; !colFiles.atEnd(); colFiles.moveNext(), i++) //读取文件夹下文件
+
+        {
+
+            var objFile = colFiles.item();
+
+            if (re_inf1.test(objFile.Name.toLowerCase())) {
+                mypic[i] = tbsource + objFile.Name ;
+
+
+                //  hdfiles = hdfiles+"<img src='C:\\Users\\Administrator\\Shipin7\\CaptureFiles\\2018-09-12/"+objFile.Name+"'>";
+
+            }
+
+        }
+        index=mypic.length-1;
+    }
+
+
+    function next(){
+        index++;
+        if(index==mypic.length){
+            index=0;
+        }
+
+        var img = document.getElementById("preview");
+        //图片路径设置为读取的图片
+        img.src = mypic[index];
+        img.style.width = '450px';
+        img.style.height = '300px';
+
+    }
+    function pre(){
+
+        index--;
+        if(index<0){
+            index=mypic.length-1;
+        }
+
+        var img = document.getElementById("preview");
+
+        img.src = mypic[index];
+        img.style.width = '450px';
+        img.style.height = '300px';
+
+    }
+    // alert(mypic[0]);
+    // document.getElementById("pict").innerHTML=mypic[0];
+   //对讲功能
+    function StartTalk() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.StartTalk();
+        if(0 != res)
+        {
+            alert("StartTalk Error！");
+        }
+    }
+
+    function StopTalk() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.StopTalk();
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    var cmd_up 			= 0;
+    var cmd_down 		= 1;
+    var cmd_left 		= 2;
+    var cmd_right 		= 3;
+    //ptz action
+    var action_start 	= 0;
+    var action_stop 	= 1;
+    //ptz speed
+    var ptz_speed 		= 7;
+
+    function StartUpPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_up, action_start, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StopUpPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_up, action_stop, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StartDownPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_down, action_start, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StopDownPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_down, action_stop, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StartLeftPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_left, action_start, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StopLeftPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_left, action_stop, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StartRightPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_right, action_start, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function StopRightPTZCtrl() {
+        var playOcx = document.getElementById("EZUIKit");//得到控件引用
+        var res = playOcx.PTZCtrl(cmd_right, action_stop, ptz_speed);
+        if(0 != res)
+        {
+            alert("StopTalk Error！");
+        }
+    }
+
+    function TestActiveX()
+    {
+        try {
+            var ax = new ActiveXObject("EZOPENUIACTIVEXK.EzOpenUIActiveXKCtrl.1");
+            bInstall = true;
+            //alert("已安装");
+        } catch(e) {
+            alert("未安装");
+        }
+    }
+
+
+
+
+
+    //handle message msgtype
+    var EZUI_MSGID_PLAY_EXCEPTION 			 = 0;			//播放异常
+    var EZUI_MSGID_PLAY_RECONNECT 			 = 1;			//播放重连
+    var EZUI_MSGID_PLAY_RECONNECT_EXCEPTION  = 2;			//播放重连异常
+    var EZUI_MSGID_PLAY_START 				 = 3;			//播放开始
+    var EZUI_MSGID_PLAY_STOP 				 = 4;			//播放停止
+    var EZUI_MSGID_PLAY_ARCHIVE_END 		 = 5;			//回放结束
+    var EZUI_MSGID_VOICETALK_START 		     = 16;			//语音对讲开始
+    var	EZUI_MSGID_VOICETALK_STOP 			 = 17;			//语音对讲停止
+    var	EZUI_MSGID_VOICETALK_EXCEPTION 	     = 18;			//语音对讲异常
+    var EZUI_MSGID_RECORD_FILE 			     = 20;			//查询的录像文件
+    var EZUI_MSGID_PTZCTRL_SUCCESS		     = 46;			//云台控制命令发送成功
+    var EZUI_MSGID_PTZCTRL_FAILED			 = 47;			//云台控制失败
+
+    var EZUI_ERROR_ACCESSTOKEN_EXPIRE        = "UE001"; 	///< accesstoken异常或失效，需要重新获取accesstoken，并传入到sdk
+    var EZUI_ERROR_APPKEY_TOKEN_NOT_MATCH    = "UE002";     ///< appkey和AccessToken不匹配,建议更换appkey或者AccessToken
+    var EZUI_ERROR_CHANNEL_NOT_EXIST	     = "UE004";     ///< 通道不存在，设备参数错误，建议重新获取播放地址
+    var EZUI_ERROR_DEVICE_NOT_EXIST	         = "UE005";     ///< 设备不存在，设备参数错误，建议重新获取播放地址
+    var EZUI_ERROR_PARAM_INVALID	         = "UE006";     ///< 参数错误，建议重新获取播放地址
+    var EZUI_ERROR_EZOPEN_URL_INVALID	     = "UE007";     ///< 播放地址错误,建议重新获取播放地址
+    var EZUI_ERROR_NO_RESOURCE 			 	 = "UE101";	    ///< 设备连接数过大，停止其他连接后再试试
+    var EZUI_ERROR_DEVICE_OFFLINE   	 	 = "UE102"; 	///< 设备不在线，确认设备上线之后重试
+    var EZUI_ERROR_CONNECT_DEVICE_TIMEOUT    = "UE103"; 	///< 播放失败，请求连接设备超时，检测设备网路连接是否正常.
+    var EZUI_ERROR_INNER_VERIFYCODE   		 = "UE104"; 	///< 视频验证码错误，建议查看设备上标记的验证码
+    var EZUI_ERROR_PLAY_FAIL       	 		 = "UE105"; 	///< 视频播放失败
+    var EZUI_ERROR_TERMINAL_BINDING   		 = "UE106"; 	///< 当前账号开启了终端绑定，只允许指定设备登录操作
+    var EZUI_ERROR_DEVICE_INFO_INVALID       = "UE107"; 	///< 设备信息异常为空，建议重新获取播放地址
+    var EZUI_ERROR_VIDEO_RECORD_NOTEXIST     = "UE108"; 	///< 未查找到录像文件
+    var EZUI_ERROR_VTDU_NO_RESOURCE        	 = "UE109"; 	///< 取流并发路数限制,请升级为企业版.
+    var EZUI_ERROR_UNSUPPORTED        		 = "UE110"; 	///< 设备不支持的清晰度类型, 请根据设备预览能力级选择.
+
+
+    function PluginEventHandler(lEventType, strErrorCode, lInterErrorCode){
+
+        var showpanel = document.getElementById("showPanel"); //获取显示的窗口
+        switch(lEventType)
+        {
+            case EZUI_MSGID_PLAY_START:		//播放开始
+            {
+                var info;
+                if(gPlaybackSearchRecord != "")
+                {
+                    info = "回放成功!" + gPlaybackSearchRecord;
+                }
+                else
+                {
+                    info = "播放成功!";
+                }
+                showpanel.value = info;
+                document.getElementById('startplaybtn').style.display='none';
+                document.getElementById('stopplaybtn').style.display='block';
+                document.getElementById('starttalkbtn').style.display='block';
+                document.getElementById('stoptalkbtn').style.display='none';
+                document.getElementById('ptzupbtn').style.display='block';
+                document.getElementById('ptzdownbtn').style.display='block';
+                document.getElementById('ptzleftbtn').style.display='block';
+                document.getElementById('ptzrightbtn').style.display='block';
+            }
+                break;
+            case EZUI_MSGID_PLAY_EXCEPTION:	//播放异常
+            {
+                var errinfo;
+                if(strErrorCode == EZUI_ERROR_ACCESSTOKEN_EXPIRE)
+                {
+                    errinfo = "accesstoken异常或失效，需要重新获取accesstoken，并传入到sdk";
+                }
+                else if(strErrorCode == EZUI_ERROR_APPKEY_TOKEN_NOT_MATCH)
+                {
+                    errinfo = "ppkey和AccessToken不匹配,建议更换appkey或者AccessToken";
+                }
+                else if(strErrorCode == EZUI_ERROR_CHANNEL_NOT_EXIST)
+                {
+                    errinfo = "通道不存在，设备参数错误，建议重新获取播放地址";
+                }
+                else if(strErrorCode == EZUI_ERROR_DEVICE_NOT_EXIST)
+                {
+                    errinfo = "设备不存在，设备参数错误，建议重新获取播放地址";
+                }
+                else if(strErrorCode == EZUI_ERROR_PARAM_INVALID)
+                {
+                    errinfo = "参数错误，建议重新获取播放地址";
+                }
+                else if(strErrorCode == EZUI_ERROR_EZOPEN_URL_INVALID)
+                {
+                    errinfo = "播放地址错误,建议重新获取播放地址";
+                }
+                else if(strErrorCode == EZUI_ERROR_NO_RESOURCE)
+                {
+                    errinfo = "设备连接数过大，停止其他连接后再试试";
+                }
+                else if(strErrorCode == EZUI_ERROR_DEVICE_OFFLINE)
+                {
+                    errinfo = "设备不在线，确认设备上线之后重试";
+                }
+                else if(strErrorCode == EZUI_ERROR_CONNECT_DEVICE_TIMEOUT)
+                {
+                    errinfo = "播放失败，请求连接设备超时，检测设备网路连接是否正常.";
+                }
+                else if(strErrorCode == EZUI_ERROR_INNER_VERIFYCODE)
+                {
+                    errinfo = "视频验证码错误，建议查看设备上标记的验证码";
+                }
+                else if(strErrorCode == EZUI_ERROR_PLAY_FAIL)
+                {
+                    errinfo = "视频播放失败";
+                }
+                else if(strErrorCode == EZUI_ERROR_TERMINAL_BINDING)
+                {
+                    errinfo = "当前账号开启了终端绑定，只允许指定设备登录操作";
+                }
+                else if(strErrorCode == EZUI_ERROR_DEVICE_INFO_INVALID)
+                {
+                    errinfo = "设备信息异常为空，建议重新获取播放地址";
+                }
+                else if(strErrorCode == EZUI_ERROR_VIDEO_RECORD_NOTEXIST)
+                {
+                    errinfo = "未查找到录像文件";
+                }
+                else if(strErrorCode == EZUI_ERROR_VTDU_NO_RESOURCE)
+                {
+                    errinfo = "取流并发路数限制,请升级为企业版.";
+                }
+                else if(strErrorCode == EZUI_ERROR_UNSUPPORTED)
+                {
+                    errinfo = "设备不支持的清晰度类型, 请根据设备预览能力级选择";
+                }
+
+                var info = "播放失败,"+ errinfo +".错误码:" + strErrorCode + ", 内部错误码:" +  lInterErrorCode;
+                showpanel.value = info;
+            }
+                break;
+            case EZUI_MSGID_PLAY_STOP:			//播放停止
+            {
+                document.getElementById('startplaybtn').style.display='block';
+                document.getElementById('stopplaybtn').style.display='none';
+                document.getElementById('starttalkbtn').style.display='none';
+                document.getElementById('stoptalkbtn').style.display='none';
+                document.getElementById('ptzupbtn').style.display='none';
+                document.getElementById('ptzdownbtn').style.display='none';
+                document.getElementById('ptzleftbtn').style.display='none';
+                document.getElementById('ptzrightbtn').style.display='none';
+            }
+                break;
+            case EZUI_MSGID_RECORD_FILE:		//录像搜索成功
+            {
+                gPlaybackSearchRecord = "录像搜索成功:" + strErrorCode;
+            }
+                break;
+            case EZUI_MSGID_VOICETALK_START:		//对讲开启
+            {
+                var info = "对讲开启成功";
+                showpanel.value = info;
+                document.getElementById('starttalkbtn').style.display='none';
+                document.getElementById('stoptalkbtn').style.display='block';
+            }
+                break;
+            case EZUI_MSGID_VOICETALK_STOP:		//对讲开启
+            {
+                var info = "对讲停止成功";
+                showpanel.value = info;
+                document.getElementById('starttalkbtn').style.display='block';
+                document.getElementById('stoptalkbtn').style.display='none';
+            }
+                break;
+            case EZUI_MSGID_PTZCTRL_SUCCESS:		//云台控制成功
+            {
+                var info = "云台控制信令发送成功";
+                showpanel.value = info;
+            }
+                break;
+            case EZUI_MSGID_PTZCTRL_FAILED:		//云台控制失败
+            {
+                var info = "云台控制失败";
+                showpanel.value = info;
+            }
+                break;
+            default:
+        }
+
+    }
+
+    window.unload = function(){
+        alert("unload");
+    }
+
+</script>
+
+
+<script language="javascript" for="EZUIKit" event="PluginEventHandler(lEventType, strErrorCode, lInterErrorCode)">   //打开预览时触发该事件
+PluginEventHandler(lEventType, strErrorCode, lInterErrorCode);
+</script>
+</body>
+	</aos:html>
